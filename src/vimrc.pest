@@ -1,0 +1,44 @@
+WHITE_SPACE = _{ " " | "\t" | "\r" }
+special_key = { "<" ~ ASCII_ALPHA+ ~ ">" }
+function_call = { (ASCII_ALPHA | "_" | "-")+ }
+plugin_call = { "<Plug>(" ~ function_call ~ ")" }
+command = { ":" ~ ASCII_ALPHA+ }
+normal_key = { !NEWLINE ~ ASCII_ALPHA+ }
+key = _{ plugin_call | special_key | normal_key | command }
+map_content = _{ WHITE_SPACE+ ~ (key ~ WHITE_SPACE?)+ }
+map = { WHITE_SPACE* ~ "map" ~ map_content }
+imap = {WHITE_SPACE* ~  "imap" ~ map_content}
+vmap = {WHITE_SPACE* ~  "vmap" ~ map_content}
+tmap = {WHITE_SPACE* ~  "tmap" ~ map_content}
+nmap = {WHITE_SPACE* ~  "nmap" ~ map_content}
+noremap = {WHITE_SPACE* ~  "noremap" ~ map_content}
+inoremap = {WHITE_SPACE* ~  "inoremap" ~ map_content}
+vnoremap = {WHITE_SPACE* ~  "vnoremap" ~ map_content}
+nnoremap = {WHITE_SPACE* ~  "nnoremap" ~ map_content}
+tnoremap = {WHITE_SPACE* ~  "tnoremap" ~ map_content}
+
+key_mapping = {
+    map
+    | imap
+    | vmap
+    | nmap
+    | noremap
+    | inoremap
+    | vnoremap
+    | nnoremap
+    | tnoremap
+}
+
+other = _{
+    (!(
+        key_mapping
+        | NEWLINE
+    )
+    ~ ANY)* ~ NEWLINE
+}
+
+file = {
+    SOI ~
+    (key_mapping | other)*
+    ~ EOI
+}
