@@ -20,7 +20,7 @@ impl<'a> DotFileParser<'a> for VimRcParser {
     }
 
     fn parse_file(&'a self) -> Self::PairItem {
-        VimRcParser::parse(Rule::file, &self.content)
+        Self::parse(Rule::file, &self.content)
             .expect("Failed to parse vimrc")
             .next()
             .unwrap()
@@ -85,7 +85,7 @@ fn parse_keys(pairs: Pairs<'_, Rule>) -> Vec<Key> {
 
 #[derive(Debug)]
 pub struct Ast {
-    key_bindings: Vec<KeyBinding>,
+    pub(crate) key_bindings: Vec<KeyBinding>,
 }
 
 impl Ast {
@@ -97,9 +97,9 @@ impl Ast {
 }
 
 #[derive(Debug)]
-struct KeyBinding {
-    binding_type: BindingType,
-    keys: Vec<Key>,
+pub(crate) struct KeyBinding {
+    pub binding_type: BindingType,
+    pub keys: Vec<Key>,
 }
 
 impl KeyBinding {
@@ -109,7 +109,7 @@ impl KeyBinding {
 }
 
 #[derive(Debug)]
-enum Key {
+pub(crate) enum Key {
     Command(String),
     PluginCall(String),
     Custom(String), // (name, value)
@@ -128,8 +128,31 @@ enum Key {
     Esc,
 }
 
+impl ToString for Key {
+    fn to_string(&self) -> String {
+        match self {
+            Key::Command(a) => format!("Command : `{}`", a).into(),
+            Key::PluginCall(a) => format!("Vim plug command : `{}`", a).into(),
+            Key::Custom(a) => format!("Custom key: `{}`", a).into(),
+            Key::Key(a) => format!("`{}`", a).into(),
+            Key::Nop => "`nop`".into(),
+            Key::Up => "`up`".into(),
+            Key::Down => "`down`".into(),
+            Key::Left => "`left`".into(),
+            Key::Right => "`right`".into(),
+            Key::ScrollWheelUp => "`ScrollWheelUp`".into(),
+            Key::ScrollWheelDown => "`ScrollWheelDown`".into(),
+            Key::Ctrl => "``crtl".into(),
+            Key::Alt => "`alt`".into(),
+            Key::Shift => "`shift`".into(),
+            Key::Enter => "`enter`".into(),
+            Key::Esc => "`esc`".into(),
+        }
+    }
+}
+
 #[derive(Debug)]
-enum BindingType {
+pub(crate) enum BindingType {
     Map,
     Vmap,
     Imap,
@@ -140,6 +163,23 @@ enum BindingType {
     INoremap,
     NNoremap,
     TNoremap,
+}
+
+impl ToString for BindingType {
+    fn to_string(&self) -> String {
+        match self {
+            BindingType::Map => "map".into(),
+            BindingType::Vmap => "vmap".into(),
+            BindingType::Imap => "imap".into(),
+            BindingType::Nmap => "imap".into(),
+            BindingType::Tmap => "tmap".into(),
+            BindingType::Noremap => "noremap".into(),
+            BindingType::VNoremap => "vnoremap".into(),
+            BindingType::INoremap => "inoremap".into(),
+            BindingType::NNoremap => "nnoremap".into(),
+            BindingType::TNoremap => "tnoremap".into(),
+        }
+    }
 }
 
 #[cfg(test)]

@@ -1,9 +1,9 @@
 pub(crate) mod vim;
 
+use pest::iterators::Pair;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
-use pest::iterators::Pair;
 
 pub trait DotFileParser<'a> {
     type PairItem;
