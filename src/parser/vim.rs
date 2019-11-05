@@ -131,10 +131,10 @@ pub(crate) enum Key {
 impl ToString for Key {
     fn to_string(&self) -> String {
         match self {
-            Key::Command(a) => format!("Command : `{}`", a).into(),
-            Key::PluginCall(a) => format!("Vim plug command : `{}`", a).into(),
-            Key::Custom(a) => format!("Custom key: `{}`", a).into(),
-            Key::Key(a) => format!("`{}`", a).into(),
+            Key::Command(a) => format!("Command : `{}`", a),
+            Key::PluginCall(a) => format!("Vim plug command : `{}`", a),
+            Key::Custom(a) => format!("Custom key: `{}`", a),
+            Key::Key(a) => format!("`{}`", a),
             Key::Nop => "`nop`".into(),
             Key::Up => "`up`".into(),
             Key::Down => "`down`".into(),

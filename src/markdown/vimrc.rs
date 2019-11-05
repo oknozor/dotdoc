@@ -20,10 +20,13 @@ impl ToMarkDown for Ast {
 
 impl ToMarkDown for KeyBinding {
     fn to_markdown(&self) -> String {
-        let keys = &self.keys.iter().fold("".into(), |acc: String, key| {
-            format!("{} + {}", acc, key.to_string())
-        });
+        let first_key = &self.keys[0].to_string();
+        let keys = &self.keys[1..self.keys.len()]
+            .iter()
+            .fold("".into(), |acc: String, key| {
+                format!("{} + {}", acc, key.to_string())
+            });
 
-        format!(" - {} : {}", self.binding_type.to_string(), keys)
+        format!(" - {} : {} {}", self.binding_type.to_string(), first_key, keys)
     }
 }
