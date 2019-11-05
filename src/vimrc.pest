@@ -17,6 +17,13 @@ vnoremap = { WHITE_SPACE* ~  "vnoremap" ~ map_content }
 nnoremap = { WHITE_SPACE* ~  "nnoremap" ~ map_content }
 tnoremap = { WHITE_SPACE* ~  "tnoremap" ~ map_content }
 
+vimcomment = _{ "\"" }
+markdown = { (!(dotcomment_end) ~ ("#" | "-" | "*" |"_" | ASCII_ALPHA | ASCII_DIGIT | WHITE_SPACE))* }
+dotcomment_start = _{ vimcomment+ ~ WHITE_SPACE+ ~ "..." ~ WHITE_SPACE+ }
+dotcomment_end = _{ WHITE_SPACE+ ~ "..." }
+
+dotcomment = {  dotcomment_start ~ markdown ~ dotcomment_end}
+
 key_mapping = {
     map
     | imap
@@ -39,6 +46,6 @@ other = _{
 
 file = {
     SOI ~
-    (key_mapping | other)*
+    (key_mapping | dotcomment| other)*
     ~ EOI
 }
