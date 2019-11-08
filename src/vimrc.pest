@@ -18,11 +18,31 @@ nnoremap = { WHITE_SPACE* ~  "nnoremap" ~ map_content }
 tnoremap = { WHITE_SPACE* ~  "tnoremap" ~ map_content }
 
 vimcomment = _{ "\"" }
-markdown = { (!(dotcomment_end) ~ ("#" | "-" | "*" |"_" | ASCII_ALPHA | ASCII_DIGIT | WHITE_SPACE))* }
-dotcomment_start = _{ vimcomment+ ~ WHITE_SPACE+ ~ "..." ~ WHITE_SPACE+ }
-dotcomment_end = _{ WHITE_SPACE+ ~ "..." }
+dotcomment_start = _{ vimcomment+ ~ WHITE_SPACE+ ~ "|.." ~ WHITE_SPACE* }
+dotcomment_end_inline = _{ WHITE_SPACE+ ~ "..|" }
+dotcomment_end = _{ vimcomment + ~ WHITE_SPACE* ~ "..|" }
 
-dotcomment = {  dotcomment_start ~ markdown ~ dotcomment_end}
+markdown = {
+    (!(dotcomment_start | dotcomment_end | dotcomment_end_inline)
+    ~ !NEWLINE
+    ~ ANY)*
+}
+
+
+dotcomment_inline = {
+    dotcomment_start
+    ~ markdown
+    ~ dotcomment_end_inline
+}
+
+dotcomment = {
+    dotcomment_start
+    ~ markdown?
+    ~ NEWLINE
+    ~ (vimcomment+ ~ WHITE_SPACE? ~ markdown ~ NEWLINE)*
+    ~ markdown?
+    ~ dotcomment_end
+}
 
 key_mapping = {
     map
